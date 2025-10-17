@@ -1,0 +1,12 @@
+import java.util.Scanner;
+
+public class Exercise2 {
+    public static void main(String[] args) {
+        System.out.println(Fun(50));
+        System.out.println(Fun(100));
+    }
+    public static String Fun(int num){
+        return (num<100)?"True":"False";
+
+    }
+}
