@@ -1,0 +1,43 @@
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+
+public class FileStatistics {
+    public static void main(String[] args) {
+        String filePath = "text.txt"; // 파일 경로
+
+        int charCount = 0;    // 글자 수
+        int wordCount = 0;    // 단어 수
+        int sentenceCount = 0; // 문장 수
+        int lineCount = 0;    // 줄 수
+
+        try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
+            String line;
+
+            while ((line = br.readLine()) != null) {
+                lineCount++;  // 줄 수 증가
+
+                // 글자 수 (공백 제외)
+                charCount += line.replace(" ", "").length();
+
+                // 단어 수 (공백 기준)
+                if (!line.trim().isEmpty()) {
+                    wordCount += line.trim().split("\\s+").length;
+                }
+
+                // 문장 수 (. ? ! 기준)
+                sentenceCount += line.split("[.!?]+").length;
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        // 출력
+        System.out.println("===== 파일 분석 결과 =====");
+        System.out.println("줄 수(Line count)        : " + lineCount);
+        System.out.println("글자 수(Character count) : " + charCount);
+        System.out.println("단어 수(Word count)      : " + wordCount);
+        System.out.println("문장 수(Sentence count)  : " + sentenceCount);
+    }
+}
