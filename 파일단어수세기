@@ -1,0 +1,25 @@
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+
+public class WordLimitInput {
+    public static void main(String[] args) {
+        String filePath = "input.txt";
+
+        try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
+            String line;
+
+            while ((line = br.readLine()) != null) {
+                String[] words = line.trim().split("\\s+");
+
+                if (words.length <= 5) { // 단어가 5개 이하인 줄만 처리
+                    System.out.println("처리됨: " + line);
+                } else {
+                    System.out.println("무시됨 (단어수 초과): " + line);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
