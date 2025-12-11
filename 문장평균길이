@@ -1,0 +1,107 @@
+import java.io.*;
+import java.util.*;
+
+public class FileAnalyzer {
+
+    public static void main(String[] args) {
+        String filePath = "text.txt";
+
+        int totalChars = 0;           // 전체 글자 수
+        int totalWords = 0;          // 전체 단어 수
+        int totalSentences = 0;      // 전체 문장 수
+        int koreanCount = 0;         // 한글 글자 수
+        int englishCount = 0;        // 영문 글자 수
+        int lineCount = 0;           // 줄 수
+
+        List<Integer> sentenceLengths = new ArrayList<>();
+        Map<String, Integer> wordFrequency = new HashMap<>();
+
+        try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
+            String line;
+
+            while ((line = br.readLine()) != null) {
+                lineCount++;
+
+                // 글자 수 세기
+                totalChars += line.length();
+
+                // 한글/영문 글자 세기
+                for (char c : line.toCharArray()) {
+                    if (Character.toString(c).matches("[가-힣]")) {
+                        koreanCount++;
+                    } else if (Character.isAlphabetic(c)) {
+                        englishCount++;
+                    }
+                }
+
+                // 단어 처리
+                String[] words = line.trim().split("\\s+");
+                if (!line.trim().isEmpty()) {
+                    totalWords += words.length;
+
+                    // 단어 등장 횟수 계산
+                    for (String w : words) {
+                        w = w.toLowerCase().replaceAll("[^a-z가-힣0-9]", "");
+                        if (!w.isEmpty()) {
+                            wordFrequency.put(w, wordFrequency.getOrDefault(w, 0) + 1);
+                        }
+                    }
+                }
+
+                // 문장 처리
+                String[] sentences = line.split("[.!?]+");
+                for (String s : sentences) {
+                    s = s.trim();
+                    if (!s.isEmpty()) {
+                        totalSentences++;
+                        sentenceLengths.add(s.length());
+                    }
+                }
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        // 가장 많이 나온 단어 찾기
+        String mostFreqWord = "";
+        int maxFreq = 0;
+        for (String key : wordFrequency.keySet()) {
+            if (wordFrequency.get(key) > maxFreq) {
+                mostFreqWord = key;
+                maxFreq = wordFrequency.get(key);
+            }
+        }
+
+        // 문장 평균 길이 계산
+        double avgSentenceLength = 0;
+        for (int len : sentenceLengths) {
+            avgSentenceLength += len;
+        }
+        if (!sentenceLengths.isEmpty()) {
+            avgSentenceLength /= sentenceLengths.size();
+        }
+
+        // ========== 출력 ==========
+        System.out.println("===== 📄 파일 분석 결과 =====");
+        System.out.println("총 줄 수: " + lineCount);
+        System.out.println("총 글자 수: " + totalChars);
+        System.out.println("총 단어 수: " + totalWords);
+        System.out.println("총 문장 수: " + totalSentences);
+
+        System.out.println("\n===== 📊 문장 길이 통계 =====");
+        System.out.println("문장별 길이: " + sentenceLengths);
+        System.out.printf("문장 평균 길이: %.2f\n", avgSentenceLength);
+
+        System.out.println("\n===== 🔠 글자 종류 분석 =====");
+        System.out.println("한글 글자 수: " + koreanCount);
+        System.out.println("영문 글자 수: " + englishCount);
+
+        System.out.println("\n===== 🔍 단어 빈도 =====");
+        System.out.println("가장 많이 등장한 단어: " + mostFreqWord + " (" + maxFreq + "회)");
+
+        System.out.println("\n===== 📈 비율 분석 =====");
+        System.out.printf("평균 글자수/단어비: %.2f\n", totalChars / (double) Math.max(totalWords, 1));
+
+    }
+}
